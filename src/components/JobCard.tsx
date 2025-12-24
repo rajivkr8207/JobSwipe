@@ -2,66 +2,93 @@
 import Image from "next/image";
 import { Heart, X } from "lucide-react";
 import { Job } from "@/types/job";
-import { motion, useMotionValue, useMotionValueEvent, useTransform } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useSpring,
+  useTransform,
+  animate,
+} from "framer-motion";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/navigation";
 
-interface props{
+interface props {
   jobdata: Job;
-  setCard: Dispatch<SetStateAction<Job[]>>
+  setCard: Dispatch<SetStateAction<Job[]>>;
 }
 export default function JobCard({ jobdata, setCard }: props) {
-  const router = useRouter()
-  const [animvalue, setAnimvalue] = useState<number>(0)
-  const x = useMotionValue(0)
-
-  const opacity = useTransform(x,[-150,0,150], [0,1,0]);
-  const rotate = useTransform(x,[-150,150], [18,-18]);
+  const router = useRouter();
+  const [animvalue, setAnimvalue] = useState<number>(0);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  
+  const opacity = useTransform(x, [-300, 0, 300], [0, 1, 0]);
+  const rotate = useTransform(x, [-200, 200], [30, -30]);
 
   const handledragEnd = (id: string) => {
-    if(x.get()>30){
-      router.push(`/job/${id}`)
-    }else if(x.get()< -30){
-      setCard((prev) => prev.filter((job) => job.id !== id));
+  
+    if (x.get() < -30) {
+      x.stop(); y.stop();
+      animate(x, -200, { duration: 0.5 });
+      animate(y, -500, { duration: 0.5 });
+  
+      setTimeout(() => {
+        setCard((prev) => prev.filter((job) => job.id !== id));
+      }, 300);
+    }
+    else if (x.get() > 30) {
+      x.stop(); y.stop();
+      animate(x, 200, { duration: 0.5 });
+      animate(y, -500, { duration: 0.5 });
+  
+      setTimeout(() => {
+        router.push(`/job/${id}`);
+      }, 300);
+    }
+  
+    else {
+      x.set(0);
+      y.set(0);
     }
   };
-  useMotionValueEvent(x, 'change',(latest)=>{
-    setAnimvalue(Math.floor(latest))
-  })
-
+  
   return (
     <>
       <motion.div
-      drag='x'
-      dragConstraints={{
-        left:0,
-        right:0
-      }}
-      style={{
-        gridRow:1,
-        gridColumn: 1,
-        x,
-        opacity,
-        rotate
-
-      }}
-      onDragEnd={()=>handledragEnd(jobdata.id)}
-      className="w-full h-[700px] flex-shrink-0 relative swipercard hover:cursor-grab active:cursor-grabbing">
+        drag
+        dragConstraints={{
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+        }}
+        style={{
+          gridRow: 1,
+          gridColumn: 1,
+          x,
+          y,
+          rotate,
+          // opacity,
+        }}
+        onDragEnd={() => handledragEnd(jobdata.id)}
+        className="w-full h-[500px] flex-shrink-0 relative swipercard hover:cursor-grab active:cursor-grabbing"
+      >
         <div className="absolute z-10 bottom-5 left-0 w-full  flex justify-between px-8 pointer-events-none ">
-         {animvalue<0 &&
-          <div className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center mx-2 pointer-events-auto">
-            <span className="text-2xl text-white">
-              <X />
-            </span>
-          </div>}
-          {animvalue>0 &&
-
-          <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center mx-2 pointer-events-auto absolute bottom-5 right-5">
-            <span className="text-2xl text-white ">
-              <Heart />
-            </span>
-          </div>
-}
+          {animvalue < 0 && (
+            <div className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center mx-2 pointer-events-auto">
+              <span className="text-2xl text-white">
+                <X />
+              </span>
+            </div>
+          )}
+          {animvalue > 0 && (
+            <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center mx-2 pointer-events-auto absolute bottom-5 right-5">
+              <span className="text-2xl text-white ">
+                <Heart />
+              </span>
+            </div>
+          )}
         </div>
         <div className="w-full overflow-hidden h-full rounded-[18px] m-auto shadow-[0_2px_6px_#0004] flex items-center justify-center text-white font-semibold text-2xl tracking-wide">
           <Image
@@ -88,15 +115,12 @@ export default function JobCard({ jobdata, setCard }: props) {
               CGPA {jobdata?.eligibility?.minCGPA}+
             </span>
             <span className="px-3 py-1 bg-[#282828] text-sm text-yellow-200 rounded-full border border-yellow-500">
-            Branch:
-            {jobdata?.eligibility?.branches?.map((branch: string) => (
-              <span
-                key={branch}
-                className="px-1"
-              >
-                {branch}
-              </span>
-            ))}
+              Branch:
+              {jobdata?.eligibility?.branches?.map((branch: string) => (
+                <span key={branch} className="px-1">
+                  {branch}
+                </span>
+              ))}
             </span>
 
             <span className="px-3 py-1 bg-[#282828] text-sm text-green-200 rounded-full border border-green-400">
@@ -107,7 +131,6 @@ export default function JobCard({ jobdata, setCard }: props) {
                 </span>
               ))}
             </span>
-
           </div>
         </div>
       </motion.div>
