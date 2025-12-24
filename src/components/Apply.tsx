@@ -22,7 +22,7 @@ export default function Apply({setAppsubmit}: {setAppsubmit: (value: boolean) =>
         ))}
       </ul>
       <button
-          className="mb-6 mt-8 mx-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition w-fit  flex gap-2"
+          className="mb-6 mt-8 mx-auto px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded transition w-fit  flex gap-2"
           onClick={() => setAppsubmit(false)}
         >
           <ArrowLeft /> close

@@ -19,9 +19,9 @@ export default function JobCard({ jobdata, setCard }: props) {
   const rotate = useTransform(x,[-150,150], [18,-18]);
 
   const handledragEnd = (id: string) => {
-    if(x.get()>50){
+    if(x.get()>30){
       router.push(`/job/${id}`)
-    }else if(x.get()< -50){
+    }else if(x.get()< -30){
       setCard((prev) => prev.filter((job) => job.id !== id));
     }
   };
@@ -49,14 +49,14 @@ export default function JobCard({ jobdata, setCard }: props) {
       className="w-full h-[700px] flex-shrink-0 relative swipercard hover:cursor-grab active:cursor-grabbing">
         <div className="absolute z-10 bottom-5 left-0 w-full  flex justify-between px-8 pointer-events-none ">
          {animvalue<0 &&
-          <div className="w-12 h-12 rounded-full bg-red-400 flex items-center justify-center mx-2 pointer-events-auto">
+          <div className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center mx-2 pointer-events-auto">
             <span className="text-2xl text-white">
               <X />
             </span>
           </div>}
           {animvalue>0 &&
 
-          <div className="w-12 h-12 rounded-full bg-green-400 flex items-center justify-center mx-2 pointer-events-auto absolute bottom-5 right-5">
+          <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center mx-2 pointer-events-auto absolute bottom-5 right-5">
             <span className="text-2xl text-white ">
               <Heart />
             </span>

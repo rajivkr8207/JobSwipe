@@ -35,7 +35,7 @@ const JobDetail = () => {
     <>
       <div className="max-w-lg mx-auto p-8 bg-[#1a1a2e] rounded-xl shadow-lg text-white mt-10 relative">
         <button
-          className="mb-6 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition w-fit absolute right-5 top-5 flex gap-2"
+          className="mb-6 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded transition w-fit absolute right-5 top-5 flex gap-2"
           onClick={() => window.history.back()}
         >
           <ArrowLeft /> Back
