@@ -22,37 +22,39 @@ export default function JobCard({ jobdata, setCard }: props) {
   const [animvalue, setAnimvalue] = useState<number>(0);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  
-  const opacity = useTransform(x, [-300, 0, 300], [0, 1, 0]);
+
+  // const opacity = useTransform(x, [-300, 0, 300], [0, 1, 0]);
   const rotate = useTransform(x, [-200, 200], [30, -30]);
 
   const handledragEnd = (id: string) => {
-  
     if (x.get() < -30) {
-      x.stop(); y.stop();
-      animate(x, -200, { duration: 0.5 });
-      animate(y, -500, { duration: 0.5 });
-  
+      x.stop();
+      y.stop();
+      animate(x, -200, { duration: 0.8 });
+      animate(y, -500, { duration: 0.8 });
+
       setTimeout(() => {
         setCard((prev) => prev.filter((job) => job.id !== id));
-      }, 300);
-    }
-    else if (x.get() > 30) {
-      x.stop(); y.stop();
-      animate(x, 200, { duration: 0.5 });
-      animate(y, -500, { duration: 0.5 });
-  
+      }, 700);
+    } else if (x.get() > 30) {
+      x.stop();
+      y.stop();
+      animate(x, 200, { duration: 0.8 });
+      animate(y, -500, { duration: 0.8 });
+
       setTimeout(() => {
         router.push(`/job/${id}`);
-      }, 300);
-    }
-  
-    else {
+      }, 700);
+    } else {
       x.set(0);
       y.set(0);
     }
   };
-  
+
+  useMotionValueEvent(x, "change", (latest) =>{
+    setAnimvalue(latest)
+  });
+
   return (
     <>
       <motion.div
@@ -69,7 +71,6 @@ export default function JobCard({ jobdata, setCard }: props) {
           x,
           y,
           rotate,
-          // opacity,
         }}
         onDragEnd={() => handledragEnd(jobdata.id)}
         className="w-full h-[500px] flex-shrink-0 relative swipercard hover:cursor-grab active:cursor-grabbing"
